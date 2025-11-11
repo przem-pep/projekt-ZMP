@@ -202,21 +202,21 @@ models_ewm %>%
 
 # Zbudowanie prognoz dla najlepszych modeli ARIMA/SARIMA
 
-fc_ew_arima <- forecast(Arima(miernik_ew, order = c(0, 0, 1), seasonal = c(0, 0, 0)), h = 24) # 001 000 / 001 004
-fc_pca_arima <- forecast(Arima(miernik_pca, order = c(0, 0, 2), seasonal = c(2, 0, 0)), h = 24) # 002 200 / 001 204
-fc_ewm_arima <- forecast(Arima(miernik_ewm, order = c(0, 0, 2), seasonal = c(1, 0, 1)), h = 24) # 002 101 / 004 101
+fc_ew_arima <- forecast(Arima(miernik_ew, order = c(0, 0, 1), seasonal = c(0, 0, 4)), h = 24) # 001 000 / 001 004
+fc_pca_arima <- forecast(Arima(miernik_pca, order = c(0, 0, 1), seasonal = c(2, 0, 4)), h = 24) # 002 200 / 001 204
+fc_ewm_arima <- forecast(Arima(miernik_ewm, order = c(0, 0, 4), seasonal = c(1, 0, 1)), h = 24) # 002 101 / 004 101
 
 
 # Błędy prognoz dla wszystkich metod
 
-met_ew_hw <- metrics(test$miernik_ew, fc_ew_hw$mean)
-met_ew_arima <- metrics(test$miernik_ew, fc_ew_arima$mean)
+met_ew_hw <- round(metrics(test$miernik_ew, fc_ew_hw$mean), 3)
+met_ew_arima <- round(metrics(test$miernik_ew, fc_ew_arima$mean), 3)
 
-met_pca_hw <- metrics(test$miernik_pca, fc_pca_hw$mean)
-met_pca_arima <- metrics(test$miernik_pca, fc_pca_arima$mean)
+met_pca_hw <- round(metrics(test$miernik_pca, fc_pca_hw$mean), 3)
+met_pca_arima <- round(metrics(test$miernik_pca, fc_pca_arima$mean), 3)
 
-met_ewm_hw <- metrics(test$miernik_ewm, fc_ewm_hw$mean)
-met_ewm_arima <- metrics(test$miernik_ewm, fc_ewm_arima$mean)
+met_ewm_hw <- round(metrics(test$miernik_ewm, fc_ewm_hw$mean), 3)
+met_ewm_arima <- round(metrics(test$miernik_ewm, fc_ewm_arima$mean), 3)
 
 
 # Podsumowanie prognoz
@@ -228,6 +228,22 @@ podsumowanie_prognoz <- bind_rows(met_ew_hw, met_ew_arima,
                     "PCA Holt Winters", "PCA ARIMA",
                     "EWM Holt Winters", "EWM ARIMA")) %>%
   select(metoda, everything())
+
+
+podsumowanie_prognoz %>%
+  gt() %>%
+  tab_style(style = cell_text(color = "black"), locations = cells_body()) %>%
+  tab_style(
+    style = cell_borders(sides = "all", color = "black", style = "solid", weight = px(2)),
+    locations = cells_body()) %>%
+  tab_style(
+    style = cell_borders(sides = "all", color = "black", style = "solid", weight = px(2)),
+    locations = cells_column_labels()) %>%
+  tab_style(
+    style = cell_borders(sides = "all", color = "black", style = "solid", weight = px(2)),
+    locations = cells_row_groups()) %>%
+  tab_style(style = cell_text(align = "center"),
+            locations = cells_column_labels())
 
 
 # Dane do wizualizacji

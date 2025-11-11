@@ -13,7 +13,7 @@ dane_scale <- dane %>%
 dane_scale <- bind_cols(date = dane$date, dane_scale)
 
 # szereg czasowy i podzial train / test
-dane_mts <- ts(dane_scale[, 2:12], start = c(2014, 1), frequency = 12)
+dane_mts <- ts(dane[, 2:12], start = c(2014, 1), frequency = 12)
 train <- window(dane_mts, end = c(2022, 12))
 test <- window(dane_mts, start = c(2023, 1))
 
@@ -299,24 +299,6 @@ cena_ropy_hw <- best_ets(train, test, "cena_ropy")
 
 print(cena_ropy_hw)
 
-# optymalne modele - tabela
-optymalne_modele <- data.frame(
-  model = c("sarima", "arima", "holt_winters"),
-  hdd = c("(1,0,2)(0,1,1)*", "(2,0,2)(0,0,0)", "(A,N,A)"),
-  import_gazu = c("(2,0,0)(1,0,1)", "(1,0,1)(0,0,0)*", "(A,Ad,N)"),
-  import_ropy = c("(0,1,1)(2,0,0)", "(0,1,2)(0,0,0)*", "(A,N,N)"),
-  zuzycie_energii = c("(2,2,1)(2,1,0)*", "(2,0,2)(0,0,0)", "(A,A,A)"),
-  zuzycie_gazu = c("(2,2,0)(1,1,0)*", "(2,1,2)(0,0,0)", "(A,M,A)"),
-  dostawy_prod_naft = c("(1,0,2)(1,2,0)*", "(2,2,2)(0,0,0)", "(A,M,A)"),
-  dostawy_wegla = c("(0,2,2)(2,1,1)*", "(1,2,2)(0,0,0)", "(A,M,A)"),
-  cena_akcji_orlen = c("(0,2,0)(2,0,1)*", "(0,1,0)(0,0,0)", "(A,A,A)"),
-  cena_akcji_energa = c("(2,2,0)(1,0,1)*", "(1,2,0)(0,0,0)", "(A,M,M)"),
-  cena_gazu = c("(1,0,2)(0,1,1)*", "(2,0,2)(0,0,0)", "(A,N,A)"),
-  cena_ropy = c("(0,0,2)(0,0,0)*", "(0,0,2)(0,0,0)", "(A,Md,M)")
-)
-
-print(optymalne_modele)
-
 # hdd - prognoza
 model_hdd <- Arima(train[, "hdd"], order=c(1,0,2), seasonal=c(0,1,1))
 summary(model_hdd)
@@ -334,7 +316,7 @@ bledy_hdd <- cbind(bledy_hdd, RMSPE = c(NA, RMSPE_hdd))
 print((bledy_hdd)[2,])
 
 # import_gazu - prognoza
-model_ig <- Arima(train[, "import_gazu"], order=c(1,0,1), seasonal=c(0,0,0))
+model_ig <- Arima(train[, "import_gazu"], order=c(1,0,1), seasonal=c(1,0,1))
 summary(model_ig)
 
 prog_ig <- forecast(model_ig, h = 24)
@@ -350,7 +332,7 @@ bledy_ig <- cbind(bledy_ig, RMSPE = c(NA, RMSPE_ig))
 print((bledy_ig)[2,])
 
 # import_ropy - prognoza
-model_ir <- Arima(train[, "import_ropy"], order=c(0,1,2), seasonal=c(0,0,0))
+model_ir <- Arima(train[, "import_ropy"], order=c(1,2,0), seasonal=c(0,0,0))
 summary(model_ir)
 
 prog_ir <- forecast(model_ir, h = 24)
@@ -398,7 +380,7 @@ bledy_zg <- cbind(bledy_zg, RMSPE = c(NA, RMSPE_zg))
 print((bledy_zg)[2,])
 
 # dostawy_prod_naft - prognoza
-model_dpn <- Arima(train[, "dostawy_prod_naft"], order=c(1,0,2), seasonal=c(1,2,0))
+model_dpn <- Arima(train[, "dostawy_prod_naft"], order=c(1,0,2), seasonal=c(0,1,0))
 summary(model_dpn)
 
 prog_dpn <- forecast(model_dpn, h = 24)
@@ -414,7 +396,7 @@ bledy_dpn <- cbind(bledy_dpn, RMSPE = c(NA, RMSPE_dpn))
 print((bledy_dpn)[2,])
 
 # dostawy_wegla - prognoza
-model_wd <- Arima(train[, "dostawy_wegla"], order=c(0,2,2), seasonal=c(2,1,1))
+model_wd <- Arima(train[, "dostawy_wegla"], order=c(2,2,2), seasonal=c(2,1,1))
 summary(model_wd)
 
 prog_wd <- forecast(model_wd, h = 24)
@@ -462,7 +444,7 @@ bledy_ce <- cbind(bledy_ce, RMSPE = c(NA, RMSPE_ce))
 print((bledy_ce)[2,])
 
 # cena_gazu - prognoza
-model_cg <- Arima(train[, "cena_gazu"], order=c(1,0,2), seasonal=c(0,1,1))
+model_cg <- Arima(train[, "cena_gazu"], order=c(1,0,2), seasonal=c(2,0,2))
 summary(model_cg)
 
 prog_cg <- forecast(model_cg, h = 24)
@@ -478,7 +460,7 @@ bledy_cg <- cbind(bledy_cg, RMSPE = c(NA, RMSPE_cg))
 print((bledy_cg)[2,])
 
 # cena_ropy - prognoza
-model_cr <- Arima(train[, "cena_ropy"], order=c(1,0,2), seasonal=c(0,1,1))
+model_cr <- Arima(train[, "cena_ropy"], order=c(1,0,0), seasonal=c(1,0,1))
 summary(model_cr)
 
 prog_cr <- forecast(model_cr, h = 24)

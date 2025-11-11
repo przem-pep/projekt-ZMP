@@ -3,6 +3,7 @@ library(tidyverse)
 dane_wizualizacje_zmiennych <- read_csv("data/dane.csv") %>%
   pivot_longer(cols = c(-date))
 dane_wizualizacje_bezposrednie <- read_csv("data/dane_wizualizacje_bezposrednie.csv")
+dane_wizualizacje_posrednie <- read_csv("data/dane_wizualizacje_posrednie.csv")
 
 
 # Wykresy pierwszych pięciu zmiennych
@@ -253,3 +254,101 @@ wykres_ewm_arima_bezp <- dane_wizualizacje_bezposrednie %>%
 
 ggsave("figures/wykres_ewm_arima_bezp.png", wykres_ewm_arima_bezp)
 
+
+# Prognoza pośrednia indeksu EW
+
+wykres_ew_pos <- dane_wizualizacje_posrednie %>%
+  filter(name %in% c("miernik_ew", "prognoza_ew_pos")) %>%
+  ggplot(aes(x = date, y = value, colour = name, linetype = name)) +
+  geom_line(linewidth = 1.1) +
+  scale_colour_manual(
+    name = NULL,
+    values = c("miernik_ew" = "grey15",
+               "prognoza_ew_pos" = "blue"),
+    labels = c("Obserwacje", "Prognoza")) +
+  scale_linetype_manual(
+    name = NULL,
+    values = c("miernik_ew" = "solid",
+               "prognoza_ew_pos" = "dotted"),
+    labels = c("Obserwacje", "Prognoza")
+  ) +
+  scale_x_date(date_breaks = "1 year",
+               date_labels = "%Y") +
+  labs(title = "Prognoza pośrednia indeksu EW",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "white", colour = "black"))
+
+ggsave("figures/wykres_ew_pos.png", wykres_ew_pos)
+
+
+# Prognoza pośrednia indeksu PCA
+
+wykres_pca_pos <- dane_wizualizacje_posrednie %>%
+  filter(name %in% c("miernik_pca", "prognoza_pca_pos")) %>%
+  ggplot(aes(x = date, y = value, colour = name, linetype = name)) +
+  geom_line(linewidth = 1.1) +
+  scale_colour_manual(
+    name = NULL,
+    values = c("miernik_pca" = "grey15",
+               "prognoza_pca_pos" = "blue"),
+    labels = c("Obserwacje", "Prognoza")) +
+  scale_linetype_manual(
+    name = NULL,
+    values = c("miernik_pca" = "solid",
+               "prognoza_pca_pos" = "dotted"),
+    labels = c("Obserwacje", "Prognoza")
+  ) +
+  scale_x_date(date_breaks = "1 year",
+               date_labels = "%Y") +
+  labs(title = "Prognoza pośrednia indeksu PCA",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "white", colour = "black"))
+
+ggsave("figures/wykres_pca_pos.png", wykres_pca_pos)
+
+
+# Prognoza pośrednia indeksu EWM
+
+wykres_ewm_pos <- dane_wizualizacje_posrednie %>%
+  filter(name %in% c("miernik_ewm", "prognoza_ewm_pos")) %>%
+  ggplot(aes(x = date, y = value, colour = name, linetype = name)) +
+  geom_line(linewidth = 1.1) +
+  scale_colour_manual(
+    name = NULL,
+    values = c("miernik_ewm" = "grey15",
+               "prognoza_ewm_pos" = "blue"),
+    labels = c("Obserwacje", "Prognoza")) +
+  scale_linetype_manual(
+    name = NULL,
+    values = c("miernik_ewm" = "solid",
+               "prognoza_ewm_pos" = "dotted"),
+    labels = c("Obserwacje", "Prognoza")
+  ) +
+  scale_x_date(date_breaks = "1 year",
+               date_labels = "%Y") +
+  labs(title = "Prognoza pośrednia indeksu EWM",
+       x = NULL,
+       y = NULL) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, size = 16),
+    axis.text = element_text(size = 11),
+    legend.text = element_text(size = 11),
+    legend.position = "bottom",
+    plot.background = element_rect(fill = "white", colour = "black"))
+
+ggsave("figures/wykres_ewm_pos.png", wykres_ewm_pos)
